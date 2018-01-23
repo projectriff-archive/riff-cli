@@ -18,13 +18,21 @@ package functions
 import (
 	"path/filepath"
 	"github.com/projectriff/riff-cli/pkg/osutils"
+	"errors"
+	"fmt"
 )
 
-func FunctionNameFromPath(path string) string {
-	if osutils.IsDirectory(path) {
-		return filepath.Base(path)
-	} else {
-		return filepath.Base(filepath.Dir(path))
+func FunctionNameFromPath(path string) (string, error) {
+	if !osutils.FileExists(path) {
+		return "", errors.New(fmt.Sprintf("path %s does not exist",path));
 	}
+	abs,err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+	if osutils.IsDirectory(abs) {
+		return filepath.Base(abs), nil
+	}
+	return filepath.Base(filepath.Dir(abs)), nil
 
 }

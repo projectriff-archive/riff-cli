@@ -92,7 +92,7 @@ func doInitialize(language string, ext string, opts options.InitOptions) error {
 
 
 	// Create function resources in function Path
-	opts.FunctionName = functions.FunctionNameFromPath(opts.FunctionPath)
+	opts.FunctionName, _ = functions.FunctionNameFromPath(opts.FunctionPath)
 
 	if opts.Input == "" {
 		opts.Input = opts.FunctionName
