@@ -115,7 +115,7 @@ var initJavaCmd = &cobra.Command{
 	Long:  createCmdLong(initJavaDescription, LongVals{Process: initDefinition, Command: "init java", Result: initResult}),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		initOptions.Handler = getHandler(cmd)
-		err := initializer.InitializeJava(initOptions)
+		err := initializer.Java().Initialize(initOptions)
 		if err != nil {
 			return err
 		}
@@ -145,7 +145,7 @@ var initShellCmd = &cobra.Command{
 	Long:  createCmdLong(initShellDescription, LongVals{Process: initDefinition, Command: "init shell", Result: initResult}),
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := initializer.InitializeShell(initOptions)
+		err := initializer.Shell().Initialize(initOptions)
 		if err != nil {
 			return err
 		}
@@ -175,7 +175,7 @@ var initNodeCmd = &cobra.Command{
 	Long:  createCmdLong(initNodeDescription, LongVals{Process: initDefinition, Command: "init node", Result: initResult}),
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := initializer.InitializeNode(initOptions)
+		err := initializer.Node().Initialize(initOptions)
 		if err != nil {
 			return err
 		}
@@ -204,7 +204,7 @@ var initPythonCmd = &cobra.Command{
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		initOptions.Handler = getHandler(cmd)
-		err := initializer.InitializePython(initOptions)
+		err := initializer.Python().Initialize(initOptions)
 		if err != nil {
 			return err
 		}
