@@ -49,21 +49,21 @@ var deleteCmd = &cobra.Command {
 		if deleteOptions.name == "" {
 			var err error
 			deleteOptions.name, err = functions.FunctionNameFromPath(deleteOptions.path)
-			if (err != nil) {
+			if err != nil {
 				ioutils.Errorf("Error: %v\n", err)
 				return
 			}
 		}
 
 		abs,err := functions.AbsPath(deleteOptions.path)
-		if (err != nil) {
+		if err != nil {
 			ioutils.Errorf("Error: %v\n", err)
 			return
 		}
 
 		var cmdArgs []string
 
-		if (deleteOptions.all) {
+		if deleteOptions.all {
 			optionPath := deleteOptions.path
 			if !osutils.IsDirectory(abs) {
 				abs = filepath.Dir(abs)
