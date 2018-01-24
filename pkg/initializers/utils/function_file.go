@@ -14,77 +14,29 @@
  *   limitations under the License.
  */
 
-package core
+package utils
 
 import (
 	"github.com/projectriff/riff-cli/pkg/options"
 	"path/filepath"
-	"fmt"
-	"github.com/projectriff/riff-cli/pkg/generate"
 	"github.com/projectriff/riff-cli/pkg/osutils"
+	"fmt"
 	"errors"
-	"github.com/projectriff/riff-cli/pkg/functions"
 )
 
 var supportedExtensions = []string{"js", "java", "py", "sh"}
 
-var languageForFileExtension = map[string]string{
-	"sh"	:  	"shell",
-	"java"	: 	"java",
-	"js"	:   "node",
-	"py"	: 	"python",
+var languageForFileExtensions = map[string]string{
+	"sh":   "shell",
+	"java": "java",
+	"js":   "node",
+	"py":   "python",
 }
-
-type Initializer struct {
-	Initialize func(options.InitOptions) error
-}
-
-func Initialize(language string, ext string, opts options.InitOptions) error {
-	functionPath, err := ResolveFunctionPath(opts, ext)
-	if err != nil {
-		return err
-	}
-
-	if opts.Artifact != "" && languageForFileExtension[filepath.Ext(opts.Artifact)[1:]] != language {
-		return errors.New(fmt.Sprintf("language %s conflicts with artifact file extension %s",language, opts.Artifact))
-	}
-
-
-	// Create function resources in function Path
-	opts.FunctionName, _ = functions.FunctionNameFromPath(opts.FunctionPath)
-
-	if opts.Input == "" {
-		opts.Input = opts.FunctionName
-	}
-
-	if opts.Artifact =="" {
-		opts.Artifact = filepath.Base(functionPath)
-	}
-
-	var protocolForLanguage = map[string]string{
-		"shell"	:  	"stdio",
-		"java"	: 	"http",
-		"js"	:   "http",
-		"node"	:   "http",
-		"py"	: 	"stdio",
-	}
-
-	if opts.Protocol == "" {
-		opts.Protocol = protocolForLanguage[language]
-	}
-
-	workdir := filepath.Dir(functionPath)
-
-	err = generate.CreateFunction(workdir,language, opts)
-	return err
-}
-
 
 //Assumes given file paths have been sanity checked and are valid
-func ResolveFunctionPath(options options.InitOptions, ext string) (string, error) {
+func ResolveFunctionFile(opts options.InitOptions, language string, ext string) (string, error) {
 
-
-	absFilePath, err := filepath.Abs(options.FunctionPath)
+	absFilePath, err := filepath.Abs(opts.FunctionPath)
 	if err != nil {
 		return "", err
 	}
@@ -93,20 +45,20 @@ func ResolveFunctionPath(options options.InitOptions, ext string) (string, error
 	var functionDir string
 	var functionFile string
 	if osutils.IsDirectory(absFilePath) {
-		if options.Artifact == "" {
-			functionFile = options.FunctionName
+		if opts.Artifact == "" {
+			functionFile = opts.FunctionName
 			functionDir = absFilePath
 			if ext != "" {
 				resolvedFunctionPath = filepath.Join(functionDir, fmt.Sprintf("%s.%s", functionFile, ext))
 			} else {
-				functionFile, err = searchForFunctionResource(functionDir, options.FunctionName)
+				functionFile, err = searchForFunctionResource(functionDir, opts.FunctionName)
 				if err != nil {
 					return "", err
 				}
 				resolvedFunctionPath = functionFile
 			}
 		} else {
-			resolvedFunctionPath = filepath.Join(absFilePath, options.Artifact)
+			resolvedFunctionPath = filepath.Join(absFilePath, opts.Artifact)
 		}
 	} else {
 		resolvedFunctionPath = absFilePath
@@ -114,8 +66,12 @@ func ResolveFunctionPath(options options.InitOptions, ext string) (string, error
 	if !osutils.FileExists(resolvedFunctionPath) {
 		return "", errors.New(fmt.Sprintf("function path %s does not exist", resolvedFunctionPath))
 	}
-	return resolvedFunctionPath, nil
 
+	if opts.Artifact != "" && languageForFileExtensions[filepath.Ext(resolvedFunctionPath)[1:]] != language {
+		return "", errors.New(fmt.Sprintf("language %s conflicts with artifact file extension %s", language, opts.Artifact))
+	}
+
+	return resolvedFunctionPath, nil
 }
 
 func searchForFunctionResource(dir string, functionName string) (string, error) {
@@ -145,4 +101,3 @@ func searchForFunctionResource(dir string, functionName string) (string, error) 
 	}
 	return foundFile, nil
 }
-

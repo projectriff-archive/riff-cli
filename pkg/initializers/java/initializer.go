@@ -18,7 +18,9 @@ package java
 
 import (
 	"github.com/projectriff/riff-cli/pkg/options"
-	"github.com/projectriff/riff-cli/pkg/initializer/core"
+	"github.com/projectriff/riff-cli/pkg/initializers/utils"
+	"path/filepath"
+	"github.com/projectriff/riff-cli/pkg/initializers/core"
 )
 
 const (
@@ -28,6 +30,19 @@ const (
 
 
 func Initialize(opts options.InitOptions) error {
-	return core.Initialize(language, extension, opts)
+	functionfile, err := utils.ResolveFunctionFile(opts, language, extension)
+	if err != nil {
+		return err
+	}
+	utils.ResolveOptions(functionfile, language, &opts)
+
+	workdir := filepath.Dir(functionfile)
+
+	generator := core.ArtifactsGenerator{
+		GenerateFunction: core.DefaultGenerateFunction,
+		GenerateDockerFile: generateJavaFunctionDockerFile,
+	}
+
+	return core.GenerateFunctionArtfacts(generator, workdir,opts)
 }
 

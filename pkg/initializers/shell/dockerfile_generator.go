@@ -14,19 +14,26 @@
  *   limitations under the License.
  */
 
-package node
+package shell
 
 import (
 	"github.com/projectriff/riff-cli/pkg/options"
-	"github.com/projectriff/riff-cli/pkg/initializer/core"
+	"path/filepath"
+	"github.com/projectriff/riff-cli/pkg/initializers/core"
 )
 
-const (
-	language = "node"
-	extension = "js"
-)
+var shellFunctionDockerfileTemplate = `
+FROM projectriff/shell-function-invoker:{{.RiffVersion}}
+ARG FUNCTION_URI="/{{.ArtifactBase}}"
+ADD {{.Artifact}} /
+ENV FUNCTION_URI $FUNCTION_URI
+`
 
-func Initialize(opts options.InitOptions) error {
-	return core.Initialize(language, extension, opts)
+func generateShellFunctionDockerFile(opts options.InitOptions) (string, error) {
+	dockerFileTokens := core.DockerFileTokens{
+		Artifact:     opts.Artifact,
+		ArtifactBase: filepath.Base(opts.Artifact),
+		RiffVersion:  opts.RiffVersion,
+	}
+	return core.GenerateFunctionDockerFileContents(shellFunctionDockerfileTemplate, "docker-shell", dockerFileTokens)
 }
-

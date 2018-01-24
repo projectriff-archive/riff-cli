@@ -14,19 +14,28 @@
  *   limitations under the License.
  */
 
-package python
+package java
 
 import (
 	"github.com/projectriff/riff-cli/pkg/options"
-	"github.com/projectriff/riff-cli/pkg/initializer/core"
+	"fmt"
+	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
-const (
-	language = "python"
-	extension = "py"
-)
+func TestJavaDockerfile(t *testing.T) {
+	as := assert.New(t)
 
-func Initialize(opts options.InitOptions) error {
-	return core.Initialize(language, extension, opts)
+	opts := options.InitOptions{
+		Artifact:    "target/greeter-1.0.0.jar",
+		RiffVersion: "0.0.2",
+		Handler:     "functions.Greeter",
+	}
+
+	docker, err := generateJavaFunctionDockerFile(opts)
+	as.NoError(err)
+	as.Contains(docker, fmt.Sprintf("FROM projectriff/java-function-invoker:%s", opts.RiffVersion))
+	as.Contains(docker, "ARG FUNCTION_JAR=/functions/greeter-1.0.0.jar")
+	as.Contains(docker, fmt.Sprintf("ARG FUNCTION_CLASS=%s", opts.Handler))
+	as.Contains(docker, fmt.Sprintf("ADD %s $FUNCTION_JAR", opts.Artifact))
 }
-

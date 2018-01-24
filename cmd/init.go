@@ -22,9 +22,9 @@ import (
 	"github.com/projectriff/riff-cli/pkg/options"
 	"os"
 	"github.com/spf13/pflag"
-	"github.com/projectriff/riff-cli/pkg/initializer"
 	"github.com/projectriff/riff-cli/cmd/utils"
 	"github.com/projectriff/riff-cli/cmd/opts"
+	"github.com/projectriff/riff-cli/pkg/initializers"
 )
 
 
@@ -41,7 +41,7 @@ var initCmd = &cobra.Command{
 	Long:  	utils.InitCmdLong(),
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := initializer.Initialize(opts.InitOptions)
+		err := initializers.Initialize(opts.InitOptions)
 		if err != nil {
 			return err
 		}
@@ -90,7 +90,7 @@ var initJavaCmd = &cobra.Command{
 	Long: 	utils.InitJavaCmdLong(),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		opts.InitOptions.Handler = utils.GetHandler(cmd)
-		err := initializer.Java().Initialize(opts.InitOptions)
+		err := initializers.Java().Initialize(opts.InitOptions)
 		if err != nil {
 			return err
 		}
@@ -108,7 +108,7 @@ var initShellCmd = &cobra.Command{
 	Long:	utils.InitShellCmdLong(),
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := initializer.Shell().Initialize(opts.InitOptions)
+		err := initializers.Shell().Initialize(opts.InitOptions)
 		if err != nil {
 			return err
 		}
@@ -125,7 +125,7 @@ var initNodeCmd = &cobra.Command{
 	Long:	utils.InitNodeCmdLong(),
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := initializer.Node().Initialize(opts.InitOptions)
+		err := initializers.Node().Initialize(opts.InitOptions)
 		if err != nil {
 			return err
 		}
@@ -146,7 +146,7 @@ var initPythonCmd = &cobra.Command{
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		opts.InitOptions.Handler = utils.GetHandler(cmd)
-		err := initializer.Python().Initialize(opts.InitOptions)
+		err := initializers.Python().Initialize(opts.InitOptions)
 		if err != nil {
 			return err
 		}

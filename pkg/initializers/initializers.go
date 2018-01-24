@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package initializer
+package initializers
 
 import (
 	"path/filepath"
@@ -22,14 +22,18 @@ import (
 	"errors"
 
 	"github.com/projectriff/riff-cli/pkg/options"
-	"github.com/projectriff/riff-cli/pkg/initializer/core"
-	"github.com/projectriff/riff-cli/pkg/initializer/java"
-	"github.com/projectriff/riff-cli/pkg/initializer/python"
-	"github.com/projectriff/riff-cli/pkg/initializer/node"
-	"github.com/projectriff/riff-cli/pkg/initializer/shell"
+	"github.com/projectriff/riff-cli/pkg/initializers/java"
+	"github.com/projectriff/riff-cli/pkg/initializers/python"
+	"github.com/projectriff/riff-cli/pkg/initializers/node"
+	"github.com/projectriff/riff-cli/pkg/initializers/shell"
+	"github.com/projectriff/riff-cli/pkg/initializers/utils"
 )
 
 var supportedExtensions = []string{"js", "java", "py", "sh"}
+
+type Initializer struct {
+	Initialize func(options.InitOptions) error
+}
 
 var languageForFileExtension = map[string]string{
 	"sh":   "shell",
@@ -38,30 +42,30 @@ var languageForFileExtension = map[string]string{
 	"py":   "python",
 }
 
-func Java() core.Initializer {
-	return core.Initializer{
+func Java() Initializer {
+	return Initializer{
 		Initialize: java.Initialize,
 	}
 }
 
-func Python() core.Initializer {
-	return core.Initializer{
+func Python() Initializer {
+	return Initializer{
 		Initialize: python.Initialize,
 	}
 }
-func Node() core.Initializer {
-	return core.Initializer{
+func Node() Initializer {
+	return Initializer{
 		Initialize: node.Initialize,
 	}
 }
-func Shell() core.Initializer {
-	return core.Initializer{
+func Shell() Initializer {
+	return Initializer{
 		Initialize: shell.Initialize,
 	}
 }
 
 func Initialize(opts options.InitOptions) error {
-	functionPath, err := core.ResolveFunctionPath(opts, "")
+	functionPath, err := utils.ResolveFunctionFile(opts, "","")
 	if err != nil {
 		return err
 	}
@@ -85,3 +89,5 @@ func Initialize(opts options.InitOptions) error {
 	}
 	return nil
 }
+
+
