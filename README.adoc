@@ -1,5 +1,7 @@
 = riff CLI tool
 
+* [Documentation](docs/riff.md)
+
 built with https://github.com/spf13/cobra[cobra]
 
 == Building

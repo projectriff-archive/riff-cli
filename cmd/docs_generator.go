@@ -25,6 +25,7 @@ import (
 )
 
 var directory string
+var createDir bool
 
 var docsCmd = &cobra.Command{
 	Use:   "docs",
@@ -36,6 +37,11 @@ riff apply -f some/function/path/some.yaml
 `,
 	Hidden:true,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		if !osutils.IsDirectory(directory) {
+			os.Mkdir(directory,0744)
+		}
+
 		err := doc.GenMarkdownTree(rootCmd, directory)
 		if err != nil {
 			ioutils.Errorf("Doc generation failed %v\n", err)
@@ -47,6 +53,6 @@ riff apply -f some/function/path/some.yaml
 
 func init() {
 	rootCmd.AddCommand(docsCmd)
-	docsCmd.Flags().StringVarP(&directory, "dir", "d", osutils.GetCWD(),"the output directory for the docs.")
+	docsCmd.Flags().StringVarP(&directory, "dir", "d", osutils.Path(osutils.GetCWD()+"/docs"),"the output directory for the docs.")
 
 }
