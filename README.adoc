@@ -1,6 +1,6 @@
 = riff CLI tool
 
-* [Documentation](docs/riff.md)
+* link:docs/riff.md[Documentation]
 
 built with https://github.com/spf13/cobra[cobra]
 
