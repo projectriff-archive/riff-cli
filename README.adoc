@@ -1,18 +1,18 @@
 = riff CLI tool
 
-* link:docs/riff.md[Documentation]
+* link:riff/docs/riff.md[Documentation]
 
 built with https://github.com/spf13/cobra[cobra]
 
 == Building
 ```
-go get github.com/projectriff/riff-cli
-cd $(go env GOPATH)/src/github.com/projectriff/riff-cli
+go get -d github.com/projectriff/riff-cli/...
+cd $(go env GOPATH)/src/github.com/projectriff/riff-cli/riff
 make
 ```
 
 == Running tests
 ```
-cd $(go env GOPATH)/src/github.com/projectriff/riff-cli
+cd $(go env GOPATH)/src/github.com/projectriff/riff-cli/riff
 make test
 ```
