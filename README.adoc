@@ -1,4 +1,4 @@
-* The contents of this repository has moved to https://github.com/projectriff/riff/tree/master/riff-cli*
+*The contents of this repository has moved to https://github.com/projectriff/riff/tree/master/riff-cli*
 
 
 = riff CLI tool
